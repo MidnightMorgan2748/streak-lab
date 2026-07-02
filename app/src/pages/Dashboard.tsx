@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Database from "@tauri-apps/plugin-sql";
 import { useTestStore } from "../stores/useTestStore";
+import { dbService } from "../database/db";
 
 export default function Dashboard() {
   const { count, increment } = useTestStore();
@@ -11,16 +11,16 @@ export default function Dashboard() {
   useEffect(() => {
     async function initDb() {
       try {
-        setDbLogs((prev) => [...prev, "Loading SQLite plugin..."]);
-        const db = await Database.load("sqlite:streaklab.db");
-        setDbLogs((prev) => [...prev, "sqlite:streaklab.db loaded successfully."]);
+        setDbLogs((prev) => [...prev, "Loading SQLite dbService..."]);
+        await dbService.getDb();
+        setDbLogs((prev) => [...prev, "dbService connected successfully."]);
 
-        await db.execute(
+        await dbService.execute(
           "CREATE TABLE IF NOT EXISTS connection_test (id INTEGER PRIMARY KEY AUTOINCREMENT, test_val TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)"
         );
 
         // Fetch logs
-        const results = await db.select<{ id: number; test_val: string; created_at: string }[]>(
+        const results = await dbService.select<{ id: number; test_val: string; created_at: string }[]>(
           "SELECT * FROM connection_test ORDER BY id DESC LIMIT 5"
         );
 

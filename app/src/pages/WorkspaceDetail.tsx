@@ -4,6 +4,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useWorkspaceStore } from "../stores/useWorkspaceStore";
 import { useTaskStore, Task } from "../stores/useTaskStore";
 import { useCompletionStore } from "../stores/useCompletionStore";
+import { calculateStreakStats } from "../utils/analytics";
 
 export default function WorkspaceDetail() {
   const { id } = useParams();
@@ -455,16 +456,59 @@ export default function WorkspaceDetail() {
           )}
 
           {activeTab === "analytics" && (
-            <div className="flex-grow flex flex-col items-center justify-center text-center p-8 h-full bg-[#f6f8fa]/40">
-              <div className="w-10 h-10 bg-[#f6f8fa] border border-[#d0d7de] flex items-center justify-center text-gray-500 mb-3">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2zm9-10v10a2 2 0 002 2h2a2 2 0 002-2V9a2 2 0 00-2-2h-2a2 2 0 00-2 2z" />
-                </svg>
+            <div className="flex-grow flex flex-col h-full overflow-y-auto bg-white">
+              <div className="h-10 px-4 border-b border-[#d0d7de] flex items-center justify-between bg-[#f6f8fa]">
+                <span className="text-xs font-bold text-gray-900 uppercase font-mono tracking-wide">
+                  Habit Consistency & Streaks
+                </span>
               </div>
-              <h3 className="text-sm font-semibold text-gray-900">Analytics View</h3>
-              <p className="text-xs text-gray-500 max-w-xs mt-1">
-                Graphs and completion metrics will display here to analyze habit consistency.
-              </p>
+              <div className="p-4 flex-grow">
+                {tasks.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center text-center p-8 h-full">
+                    <span className="text-xs font-bold text-gray-900">No stats available</span>
+                    <span className="text-[10px] text-gray-500 mt-0.5">Create tasks and log check-ins to build streaks.</span>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4">
+                    {tasks.map((task) => {
+                      const stats = calculateStreakStats(task, completions);
+                      return (
+                        <div key={task.id} className="border border-[#d0d7de] bg-[#f6f8fa] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-none shadow-sm animate-fade-in">
+                          <div className="flex flex-col gap-1">
+                            <span className="text-sm font-bold text-gray-950">{task.name}</span>
+                            <span className="text-[10px] font-mono uppercase tracking-wider text-gray-500">
+                              {task.frequency} {task.frequency_config ? `(${task.frequency_config})` : ""}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center gap-6 sm:gap-12">
+                            <div className="flex flex-col items-center">
+                              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Current Streak</span>
+                              <span className="text-lg font-bold text-gray-900 mt-0.5 flex items-center gap-1 font-mono">
+                                {stats.currentStreak} <span className={stats.currentStreak > 0 ? "text-amber-600" : "text-gray-300"}>🔥</span>
+                              </span>
+                            </div>
+
+                            <div className="flex flex-col items-center">
+                              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Longest Streak</span>
+                              <span className="text-lg font-bold text-gray-950 mt-0.5 font-mono">
+                                {stats.longestStreak}
+                              </span>
+                            </div>
+
+                            <div className="flex flex-col items-center">
+                              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Completion Rate</span>
+                              <span className="text-lg font-bold text-gray-950 mt-0.5 font-mono">
+                                {stats.completionRate}%
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 

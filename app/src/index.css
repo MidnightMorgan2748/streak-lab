@@ -1,31 +1,64 @@
 @import "tailwindcss";
 
-/* Base Resets for Light Mode (Notion / Wix 3761 style) */
+:root {
+  --bg-app: #ffffff;
+  --bg-panel: #f6f8fa;
+  --bg-hover: #eaeef2;
+  --bg-active: #e1e4e8;
+  --border-color: #d0d7de;
+  --text-main: #24292e;
+  --text-muted: #57606a;
+  --btn-primary-bg: #24292e;
+  --btn-primary-hover: #1b1f23;
+  --btn-primary-text: #ffffff;
+  
+  --scrollbar-track: #ffffff;
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
+}
+
+:root.dark {
+  --bg-app: #0d1117;
+  --bg-panel: #161b22;
+  --bg-hover: #21262d;
+  --bg-active: #30363d;
+  --border-color: #30363d;
+  --text-main: #c9d1d9;
+  --text-muted: #8b949e;
+  --btn-primary-bg: #f0f6fc;
+  --btn-primary-hover: #ffffff;
+  --btn-primary-text: #0d1117;
+  
+  --scrollbar-track: #0d1117;
+  --scrollbar-thumb: #30363d;
+  --scrollbar-thumb-hover: #8b949e;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #ffffff; /* Solid White */
-  color: #24292e; /* Muted dark gray/black text */
+  background-color: var(--bg-app);
+  color: var(--text-main);
   overflow: hidden;
 }
 
-/* Custom Scrollbar for light mode sharp styling */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #ffffff;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1; /* Muted gray scrollbar thumb */
-  border-radius: 0px; /* Absolute sharp corners */
+  background: var(--scrollbar-thumb);
+  border-radius: 0px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--scrollbar-thumb-hover);
 }

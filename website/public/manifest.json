@@ -1,0 +1,15 @@
+{
+  "short_name": "StreakLab",
+  "name": "StreakLab Habit Notebook",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#030303",
+  "theme_color": "#030303",
+  "display": "standalone"
+}

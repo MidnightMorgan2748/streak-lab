@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://streak-lab.vercel.app/sitemap.xml

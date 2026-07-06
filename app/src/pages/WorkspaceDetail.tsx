@@ -421,21 +421,29 @@ export default function WorkspaceDetail() {
                             const isChecked = !!completions[key];
                             const isScheduled = isTaskScheduledForDate(task, day);
                             const isToday = day.isSame(dayjs(), "day");
+                            const isEditable = isScheduled && isToday;
 
                             return (
                               <td
                                 key={dateStr}
                                 className={`text-center border-b border-[#d0d7de] border-r border-[#d0d7de] p-0.5 ${
-                                  isToday ? "bg-[#eaeef2]/30" : ""
+                                  isToday ? "bg-[#eaeef2]/30 font-bold" : ""
                                 }`}
                               >
                                 {isScheduled ? (
-                                  <label className="block w-full h-full p-2.5 cursor-pointer hover:bg-[#eaeef2]/40 transition-colors">
+                                  <label className={`block w-full h-full p-2.5 transition-colors ${
+                                    isEditable 
+                                      ? "cursor-pointer hover:bg-[#eaeef2]/40" 
+                                      : "cursor-not-allowed opacity-60"
+                                  }`}>
                                     <input
                                       type="checkbox"
                                       checked={isChecked}
-                                      onChange={() => toggleCompletion(task.id, dateStr)}
-                                      className="w-4 h-4 border-[#d0d7de] text-gray-900 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-gray-900 rounded-none"
+                                      disabled={!isEditable}
+                                      onChange={() => isEditable && toggleCompletion(task.id, dateStr)}
+                                      className={`w-4 h-4 border-[#d0d7de] focus:ring-0 focus:ring-offset-0 rounded-none ${
+                                        isEditable ? "cursor-pointer accent-gray-900 text-gray-900" : "cursor-not-allowed accent-gray-400 text-gray-400"
+                                      }`}
                                     />
                                   </label>
                                 ) : (

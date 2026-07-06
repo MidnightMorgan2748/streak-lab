@@ -179,9 +179,9 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col gap-6 max-w-5xl mx-auto">
       {/* Page Header */}
-      <div className="border-b border-[#d0d7de] pb-4">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-950">Dashboard</h1>
-        <p className="text-xs text-gray-500 mt-1">
+      <div className="border-b border-[var(--border-color)] pb-4">
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">Dashboard</h1>
+        <p className="text-xs text-[var(--text-muted)] mt-1">
           Review summary statistics and check off today's habits directly from the overview.
         </p>
       </div>
@@ -194,54 +194,54 @@ export default function Dashboard() {
 
       {/* Summary Cards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        <div className="bg-[#f6f8fa] border border-[#d0d7de] p-4 flex flex-col gap-1 rounded-none shadow-sm">
-          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Workspaces</span>
-          <span className="text-2xl font-bold text-gray-950 mt-1">
+        <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] p-4 flex flex-col gap-1 rounded-none shadow-sm">
+          <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Workspaces</span>
+          <span className="text-2xl font-bold text-[var(--text-main)] mt-1">
             {isLoading ? "..." : stats.workspacesCount}
           </span>
         </div>
 
-        <div className="bg-[#f6f8fa] border border-[#d0d7de] p-4 flex flex-col gap-1 rounded-none shadow-sm">
-          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Active Habits</span>
-          <span className="text-2xl font-bold text-gray-950 mt-1">
+        <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] p-4 flex flex-col gap-1 rounded-none shadow-sm">
+          <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Active Habits</span>
+          <span className="text-2xl font-bold text-[var(--text-main)] mt-1">
             {isLoading ? "..." : stats.habitsCount}
           </span>
         </div>
 
-        <div className="bg-[#f6f8fa] border border-[#d0d7de] p-4 flex flex-col gap-1 rounded-none shadow-sm">
-          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Completed Today</span>
-          <span className="text-2xl font-bold text-gray-950 mt-1">
+        <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] p-4 flex flex-col gap-1 rounded-none shadow-sm">
+          <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Completed Today</span>
+          <span className="text-2xl font-bold text-[var(--text-main)] mt-1">
             {isLoading ? "..." : `${stats.completedTodayCount} / ${stats.scheduledTodayCount}`}
           </span>
         </div>
 
-        <div className="bg-[#f6f8fa] border border-[#d0d7de] p-4 flex flex-col gap-1 rounded-none shadow-sm">
-          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Weekly Consistency</span>
-          <span className="text-2xl font-bold text-gray-950 mt-1">
+        <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] p-4 flex flex-col gap-1 rounded-none shadow-sm">
+          <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Weekly Consistency</span>
+          <span className="text-2xl font-bold text-[var(--text-main)] mt-1">
             {isLoading ? "..." : `${stats.weeklyConsistency}%`}
           </span>
         </div>
       </div>
 
       {/* Today's Habits Checklist Grid */}
-      <div className="grid grid-cols-1 border border-[#d0d7de] bg-[#f6f8fa]">
-        <div className="h-10 flex items-center justify-between px-4 border-b border-[#d0d7de] bg-white">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[#57606a]">Today's Schedule</span>
-          <span className="text-[9px] font-mono text-gray-500 uppercase">
+      <div className="grid grid-cols-1 border border-[var(--border-color)] bg-[var(--bg-panel)]">
+        <div className="h-10 flex items-center justify-between px-4 border-b border-[var(--border-color)] bg-[var(--bg-panel)]">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Today's Schedule</span>
+          <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase">
             {dayjs().format("dddd, MMM DD")}
           </span>
         </div>
 
-        <div className="flex flex-col bg-white min-h-[200px]">
+        <div className="flex flex-col bg-[var(--bg-app)] min-h-[200px]">
           {isLoading ? (
-            <div className="p-8 text-center text-xs text-gray-400 font-mono my-auto">
+            <div className="p-8 text-center text-xs text-[var(--text-muted)] font-mono my-auto">
               Loading schedule...
             </div>
           ) : todayTasks.length === 0 ? (
-            <div className="p-8 text-center text-xs text-gray-400 font-mono my-auto max-w-sm mx-auto">
+            <div className="p-8 text-center text-xs text-[var(--text-muted)] font-mono my-auto max-w-sm mx-auto">
               No habits scheduled for today. 
-              <div className="text-[10px] text-gray-500 mt-1">
-                Go to the <Link to="/workspaces" className="text-indigo-600 hover:underline">Workspaces</Link> tab to create and configure habits.
+              <div className="text-[10px] text-[var(--text-muted)] mt-1">
+                Go to the <Link to="/workspaces" className="text-indigo-600 hover:underline dark:text-blue-400">Workspaces</Link> tab to create and configure habits.
               </div>
             </div>
           ) : (
@@ -251,22 +251,22 @@ export default function Dashboard() {
                 return (
                   <div
                     key={task.id}
-                    className="h-12 flex items-center justify-between px-4 border-b border-[#d0d7de] hover:bg-[#f6f8fa] transition-colors"
+                    className="h-12 flex items-center justify-between px-4 border-b border-[var(--border-color)] hover:bg-[var(--bg-hover)] transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <input
                         type="checkbox"
                         checked={isCompleted}
                         onChange={() => handleToggleHabit(task.id)}
-                        className="w-4 h-4 border-[#d0d7de] text-gray-900 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-gray-900 rounded-none"
+                        className="w-4 h-4 border-[var(--border-color)] text-[var(--text-main)] focus:ring-0 focus:ring-offset-0 cursor-pointer accent-[var(--btn-primary-bg)] rounded-none"
                       />
                       <span className={`text-xs font-bold leading-none transition-all ${
-                        isCompleted ? "line-through text-gray-400" : "text-gray-900"
+                        isCompleted ? "line-through text-[var(--text-muted)] font-normal" : "text-[var(--text-main)]"
                       }`}>
                         {task.name}
                       </span>
                     </div>
-                    <span className="text-[9px] font-mono uppercase tracking-wider text-gray-400">
+                    <span className="text-[9px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
                       {task.frequency}
                     </span>
                   </div>

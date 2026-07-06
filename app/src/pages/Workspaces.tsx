@@ -37,17 +37,17 @@ export default function Workspaces() {
   return (
     <div className="flex flex-col gap-6 max-w-5xl mx-auto">
       {/* Page Header */}
-      <div className="flex items-center justify-between border-b border-[#d0d7de] pb-4">
+      <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-950">Workspaces</h1>
-          <p className="text-xs text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">Workspaces</h1>
+          <p className="text-xs text-[var(--text-muted)] mt-1">
             Manage your streak notebooks and recurring habit collections.
           </p>
         </div>
         {!isCreating && (
           <button
             onClick={() => setIsCreating(true)}
-            className="px-4 py-2 bg-gray-950 hover:bg-gray-800 active:bg-black text-white text-xs font-semibold rounded-none transition-colors duration-150 cursor-pointer"
+            className="px-4 py-2 bg-[var(--btn-primary-bg)] hover:bg-[var(--btn-primary-hover)] text-[var(--btn-primary-text)] text-xs font-semibold rounded-none transition-colors duration-150 cursor-pointer"
           >
             New Workspace
           </button>
@@ -65,24 +65,24 @@ export default function Workspaces() {
         {/* Workspace List Column */}
         <div className={`flex flex-col gap-4 ${isCreating ? "md:col-span-2" : "md:col-span-3"}`}>
           {isLoading && workspaces.length === 0 ? (
-            <div className="text-xs text-gray-500 font-mono py-12 text-center border border-[#d0d7de] bg-[#f6f8fa]">
+            <div className="text-xs text-[var(--text-muted)] font-mono py-12 text-center border border-[var(--border-color)] bg-[var(--bg-panel)]">
               Loading workspaces...
             </div>
           ) : workspaces.length === 0 ? (
-            <div className="flex flex-col items-center justify-center border border-dashed border-[#d0d7de] p-12 text-center bg-[#f6f8fa]/40">
-              <div className="w-10 h-10 bg-white border border-[#d0d7de] flex items-center justify-center text-gray-500 mb-3 rounded-none">
+            <div className="flex flex-col items-center justify-center border border-dashed border-[var(--border-color)] p-12 text-center bg-[var(--bg-panel)]/40">
+              <div className="w-10 h-10 bg-[var(--bg-app)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-muted)] mb-3 rounded-none">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
-              <h3 className="text-sm font-semibold text-gray-900">No workspaces found</h3>
-              <p className="text-xs text-gray-500 max-w-xs mt-1">
+              <h3 className="text-sm font-semibold text-[var(--text-main)]">No workspaces found</h3>
+              <p className="text-xs text-[var(--text-muted)] max-w-xs mt-1">
                 Streak sheets and task grids are organized inside workspaces. Create one to get started.
               </p>
               {!isCreating && (
                 <button
                   onClick={() => setIsCreating(true)}
-                  className="mt-4 px-3 py-1.5 bg-gray-950 hover:bg-gray-800 text-white text-xs font-semibold rounded-none cursor-pointer"
+                  className="mt-4 px-3 py-1.5 bg-[var(--btn-primary-bg)] hover:bg-[var(--btn-primary-hover)] text-[var(--btn-primary-text)] text-xs font-semibold rounded-none cursor-pointer"
                 >
                   Create Workspace
                 </button>
@@ -93,13 +93,13 @@ export default function Workspaces() {
               {workspaces.map((ws) => (
                 <div
                   key={ws.id}
-                  className="bg-[#f6f8fa] border border-[#d0d7de] p-5 flex flex-col justify-between hover:border-[#b0b8c0] transition-colors duration-150 rounded-none shadow-sm group"
+                  className="bg-[var(--bg-panel)] border border-[var(--border-color)] p-5 flex flex-col justify-between hover:border-[var(--text-muted)] transition-colors duration-150 rounded-none shadow-sm group"
                 >
                   <div className="flex flex-col gap-2">
                     <div className="flex items-start justify-between gap-4">
                       <Link
                         to={`/workspaces/${ws.id}`}
-                        className="text-base font-bold text-gray-900 hover:text-gray-600 hover:underline transition-colors leading-tight"
+                        className="text-base font-bold text-[var(--text-main)] hover:text-[var(--text-muted)] hover:underline transition-colors leading-tight"
                       >
                         {ws.name}
                       </Link>
@@ -117,11 +117,11 @@ export default function Workspaces() {
                         </svg>
                       </button>
                     </div>
-                    <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed">
                       {ws.description || "No description provided."}
                     </p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-[#d0d7de] flex items-center justify-between text-[10px] text-gray-500 font-mono">
+                  <div className="mt-4 pt-3 border-t border-[var(--border-color)] flex items-center justify-between text-[10px] text-[var(--text-muted)] font-mono">
                     <span>ID: #{ws.id}</span>
                     <span>{new Date(ws.created_at).toLocaleDateString()}</span>
                   </div>
@@ -135,9 +135,9 @@ export default function Workspaces() {
         {isCreating && (
           <form
             onSubmit={handleSubmit}
-            className="bg-[#f6f8fa] border border-[#d0d7de] p-5 flex flex-col gap-4 rounded-none shadow-sm md:col-span-1"
+            className="bg-[var(--bg-panel)] border border-[var(--border-color)] p-5 flex flex-col gap-4 rounded-none shadow-sm md:col-span-1"
           >
-            <h2 className="text-sm font-bold text-gray-900 border-b border-[#d0d7de] pb-2">
+            <h2 className="text-sm font-bold text-[var(--text-main)] border-b border-[var(--border-color)] pb-2">
               New Workspace
             </h2>
 
@@ -148,7 +148,7 @@ export default function Workspaces() {
             )}
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
                 Workspace Name
               </label>
               <input
@@ -156,14 +156,14 @@ export default function Workspaces() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Fitness, Coding Routine"
-                className="w-full bg-white border border-[#d0d7de] px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 rounded-none font-sans"
+                className="w-full bg-[var(--bg-app)] border border-[var(--border-color)] px-3 py-2 text-xs text-[var(--text-main)] placeholder-gray-400 focus:outline-none focus:border-[var(--btn-primary-bg)] rounded-none font-sans"
                 maxLength={50}
                 required
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
                 Description
               </label>
               <textarea
@@ -171,7 +171,7 @@ export default function Workspaces() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Brief summary of tasks in this workspace..."
                 rows={4}
-                className="w-full bg-white border border-[#d0d7de] px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 rounded-none font-sans resize-none"
+                className="w-full bg-[var(--bg-app)] border border-[var(--border-color)] px-3 py-2 text-xs text-[var(--text-main)] placeholder-gray-400 focus:outline-none focus:border-[var(--btn-primary-bg)] rounded-none font-sans resize-none"
                 maxLength={200}
               />
             </div>
@@ -185,13 +185,13 @@ export default function Workspaces() {
                   setDescription("");
                   setFormError("");
                 }}
-                className="w-full py-2 bg-[#eaeef2] hover:bg-[#e1e4e8] text-gray-700 text-xs font-semibold rounded-none cursor-pointer transition-colors"
+                className="w-full py-2 bg-[var(--bg-hover)] hover:bg-[var(--bg-active)] text-[var(--text-main)] text-xs font-semibold rounded-none cursor-pointer transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="w-full py-2 bg-gray-950 hover:bg-gray-800 text-white text-xs font-semibold rounded-none cursor-pointer transition-colors"
+                className="w-full py-2 bg-[var(--btn-primary-bg)] hover:bg-[var(--btn-primary-hover)] text-[var(--btn-primary-text)] text-xs font-semibold rounded-none cursor-pointer transition-colors"
               >
                 Create
               </button>

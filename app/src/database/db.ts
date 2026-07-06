@@ -11,6 +11,7 @@ class DbService {
   async getDb(): Promise<Database> {
     if (!this.instance) {
       this.instance = await Database.load(this.dbName);
+      await this.instance.execute("PRAGMA foreign_keys = ON;");
     }
     return this.instance;
   }

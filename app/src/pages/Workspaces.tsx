@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useWorkspaceStore } from "../stores/useWorkspaceStore";
 import { Link } from "react-router-dom";
+import { exportWorkspace, importWorkspace } from "../utils/sharing";
 
 export default function Workspaces() {
   const { workspaces, isLoading, error, fetchWorkspaces, createWorkspace, deleteWorkspace } =
@@ -10,6 +11,9 @@ export default function Workspaces() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [formError, setFormError] = useState("");
+  const [importError, setImportError] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchWorkspaces();
@@ -34,6 +38,28 @@ export default function Workspaces() {
     }
   };
 
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImportError(null);
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const content = event.target?.result as string;
+        await importWorkspace(content);
+        await fetchWorkspaces();
+      } catch (err: any) {
+        console.error("Failed to import workspace:", err);
+        setImportError(err?.message || "Failed to parse and import workspace file.");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = ""; // reset file input
+  };
+
+  const displayError = error || importError;
+
   return (
     <div className="flex flex-col gap-6 max-w-5xl mx-auto">
       {/* Page Header */}
@@ -44,19 +70,34 @@ export default function Workspaces() {
             Manage your streak notebooks and recurring habit collections.
           </p>
         </div>
-        {!isCreating && (
+        <div className="flex items-center gap-3">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImportFile}
+            className="hidden"
+            accept=".json"
+          />
           <button
-            onClick={() => setIsCreating(true)}
-            className="px-4 py-2 bg-[var(--btn-primary-bg)] hover:bg-[var(--btn-primary-hover)] text-[var(--btn-primary-text)] text-xs font-semibold rounded-none transition-colors duration-150 cursor-pointer"
+            onClick={() => fileInputRef.current?.click()}
+            className="px-4 py-2 bg-[var(--bg-panel)] border border-[var(--border-color)] text-[var(--text-main)] hover:bg-[var(--bg-hover)] text-xs font-semibold rounded-none cursor-pointer transition-colors"
           >
-            New Workspace
+            Import Workspace
           </button>
-        )}
+          {!isCreating && (
+            <button
+              onClick={() => setIsCreating(true)}
+              className="px-4 py-2 bg-[var(--btn-primary-bg)] hover:bg-[var(--btn-primary-hover)] text-[var(--btn-primary-text)] text-xs font-semibold rounded-none transition-colors duration-150 cursor-pointer"
+            >
+              New Workspace
+            </button>
+          )}
+        </div>
       </div>
 
-      {error && (
+      {displayError && (
         <div className="bg-rose-50 border border-rose-200 p-4 rounded-none text-xs text-rose-600 font-mono">
-          [Error] {error}
+          [Error] {displayError}
         </div>
       )}
 
@@ -77,15 +118,23 @@ export default function Workspaces() {
               </div>
               <h3 className="text-sm font-semibold text-[var(--text-main)]">No workspaces found</h3>
               <p className="text-xs text-[var(--text-muted)] max-w-xs mt-1">
-                Streak sheets and task grids are organized inside workspaces. Create one to get started.
+                Streak sheets and task grids are organized inside workspaces. Create one or import one to get started.
               </p>
               {!isCreating && (
-                <button
-                  onClick={() => setIsCreating(true)}
-                  className="mt-4 px-3 py-1.5 bg-[var(--btn-primary-bg)] hover:bg-[var(--btn-primary-hover)] text-[var(--btn-primary-text)] text-xs font-semibold rounded-none cursor-pointer"
-                >
-                  Create Workspace
-                </button>
+                <div className="flex items-center gap-3 mt-4">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-3 py-1.5 bg-[var(--bg-panel)] border border-[var(--border-color)] text-[var(--text-main)] hover:bg-[var(--bg-hover)] text-xs font-semibold rounded-none cursor-pointer"
+                  >
+                    Import Workspace
+                  </button>
+                  <button
+                    onClick={() => setIsCreating(true)}
+                    className="px-3 py-1.5 bg-[var(--btn-primary-bg)] hover:bg-[var(--btn-primary-hover)] text-[var(--btn-primary-text)] text-xs font-semibold rounded-none cursor-pointer"
+                  >
+                    Create Workspace
+                  </button>
+                </div>
               )}
             </div>
           ) : (
@@ -103,19 +152,41 @@ export default function Workspaces() {
                       >
                         {ws.name}
                       </Link>
-                      <button
-                        onClick={() => {
-                          if (confirm(`Are you sure you want to delete "${ws.name}"?`)) {
-                            deleteWorkspace(ws.id);
-                          }
-                        }}
-                        className="text-gray-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition-all duration-150 p-1 cursor-pointer"
-                        title="Delete Workspace"
-                      >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
+                      <div className="flex items-center gap-1">
+                        {/* Share Workspace Button */}
+                        <button
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            try {
+                              await exportWorkspace(ws.id);
+                            } catch (err: any) {
+                              console.error("Failed to share workspace:", err);
+                              setImportError(err?.message || "Failed to share workspace.");
+                            }
+                          }}
+                          className="text-gray-400 hover:text-[var(--text-main)] opacity-0 group-hover:opacity-100 transition-all duration-150 p-1 cursor-pointer"
+                          title="Share Workspace"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 10.742a3 3 0 110 2.516m0-2.516a3 3 0 110-2.516m0 2.516l7.632 3.816m-7.632-3.816l7.632-3.816" />
+                          </svg>
+                        </button>
+                        {/* Delete Workspace Button */}
+                        <button
+                          onClick={() => {
+                            if (confirm(`Are you sure you want to delete "${ws.name}"?`)) {
+                              deleteWorkspace(ws.id);
+                            }
+                          }}
+                          className="text-gray-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition-all duration-150 p-1 cursor-pointer"
+                          title="Delete Workspace"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                     <p className="text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed">
                       {ws.description || "No description provided."}

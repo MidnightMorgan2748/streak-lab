@@ -5,6 +5,7 @@ import { useWorkspaceStore } from "../stores/useWorkspaceStore";
 import { useTaskStore, Task } from "../stores/useTaskStore";
 import { useCompletionStore } from "../stores/useCompletionStore";
 import { calculateStreakStats } from "../utils/analytics";
+import { exportWorkspace } from "../utils/sharing";
 
 export default function WorkspaceDetail() {
   const { id } = useParams();
@@ -147,6 +148,23 @@ export default function WorkspaceDetail() {
               </svg>
             </Link>
             <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">{workspace?.name}</h1>
+            <button
+              onClick={async () => {
+                if (workspaceId) {
+                  try {
+                    await exportWorkspace(workspaceId);
+                  } catch (err: any) {
+                    console.error("Failed to share workspace:", err);
+                  }
+                }
+              }}
+              className="text-gray-400 hover:text-[var(--text-main)] transition-colors p-1 cursor-pointer"
+              title="Share Workspace"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 10.742a3 3 0 110 2.516m0-2.516a3 3 0 110-2.516m0 2.516l7.632 3.816m-7.632-3.816l7.632-3.816" />
+              </svg>
+            </button>
           </div>
           <p className="text-xs text-[var(--text-muted)] mt-1 pl-7">
             {workspace?.description || "No description provided."}

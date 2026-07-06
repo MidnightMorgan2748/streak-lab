@@ -99,7 +99,7 @@ export default function MainLayout() {
         {/* Footer Info */}
         <div className="p-3 border-t border-[var(--border-color)] flex items-center justify-between text-[9px] text-[var(--text-muted)] font-mono">
           <span>CLIENT: NATIVE</span>
-          <span>v0.1.0</span>
+          <span>v1.0.0</span>
         </div>
       </aside>
 

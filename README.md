@@ -1,6 +1,16 @@
 # StreakLab ⚡
 
-StreakLab is an offline-first, desktop-native habit tracking and productivity sheet application. Built with React, TypeScript, and Rust via Tauri, it features a clean, Notion-inspired design with dynamic dark/light mode toggles, check-in spreadsheets, consistency analytics, and JSON backup portability.
+StreakLab is an offline-first, desktop-native habit tracker and consistency sheets application. Built with React 19, TypeScript 5, and Rust via Tauri v2, it features a clean, Notion-inspired design with dynamic dark/light mode toggles, check-in spreadsheets, consistency analytics, and JSON backup portability.
+
+---
+
+## 📷 Screenshots
+
+### Dashboard
+*(Placeholder for Dashboard overview screenshot showing workspace summaries and today's task checklists)*
+
+### Habit Spreadsheet Grid
+*(Placeholder for Workspace detail grid view showing 31-day completions sheet, scheduled check-ins, and active habit statistics)*
 
 ---
 
@@ -12,11 +22,11 @@ StreakLab is an offline-first, desktop-native habit tracking and productivity sh
 *   **Habit Scheduling & Frequency Constraints**: Configure habits for daily, weekly (select specific weekdays), or monthly schedules. Non-scheduled days are automatically locked to prevent invalid check-ins.
 *   **Consistency Analytics & Streaks**: Dynamically calculates **Current Streak** (with 🔥 indicator), **Longest Streak**, and overall **Completion Rate** (excluding today if not completed yet).
 *   **Dashboard Overview**: A landing hub showing active statistics (Workspaces count, Active habits, Today's completions, Weekly consistency percentage) and today's schedule checklist.
-*   **Data Portability**: Single-click backup export of all tables into a standard, downloadable JSON file.
+*   **Workspace Sharing & Portability**: Export individual workspaces (and their history) as shared JSON files and import them on other laptops.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
 *   **Frontend**: React 19, TypeScript 5, Zustand 5 (State Management), React Router 7
 *   **Styles**: Tailwind CSS v4 (modern semantic custom variables)
@@ -25,72 +35,32 @@ StreakLab is an offline-first, desktop-native habit tracking and productivity sh
 
 ---
 
-## 📂 Project Structure
+## 💾 Architecture Overview
 
-```bash
-StreakLab/
-├── app/                      # Frontend Vite + React project
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── layouts/     # Main sidebar/outlet shell (MainLayout.tsx)
-│   │   │   └── router/      # React Router declarations (index.tsx)
-│   │   ├── database/        # SQLite connection singleton (db.ts)
-│   │   ├── pages/           # Page views (Dashboard, Workspaces, Settings, etc.)
-│   │   ├── stores/          # Zustand store definitions (workspaces, tasks, completions)
-│   │   ├── utils/           # Streak and scheduled dates logic (analytics.ts)
-│   │   ├── index.css        # Styling resets and CSS theme variables
-│   │   └── main.tsx         # React app entry point
-│   ├── package.json         # Node packaging settings
-│   └── vite.config.ts       # Vite bundler configs
-├── app/src-tauri/            # Rust native backend project
-│   ├── capabilities/        # Tauri security capability profiles (default.json)
-│   ├── src/                 # Rust source code (main.rs, lib.rs migrations)
-│   ├── Cargo.toml           # Cargo package settings
-│   └── tauri.conf.json      # Tauri application bundle configurations
-└── README.md
+StreakLab utilizes a decoupled client-server architecture inside a native desktop wrapper:
+
+```
+┌────────────────────────────────────────────────────────┐
+│                   StreakLab App                        │
+│                                                        │
+│   ┌───────────────────────┐    ┌───────────────────┐   │
+│   │    React Frontend     │◄──►│    Tauri Core     │   │
+│   │ (Zustand State Store) │    │  (Rust Interop)   │   │
+│   └───────────────────────┘    └─────────┬─────────┘   │
+│                                          │             │
+│                                          ▼             │
+│                                ┌───────────────────┐   │
+│                                │   SQLite Database │   │
+│                                │   (streaklab.db)  │   │
+│                                └───────────────────┘   │
+└────────────────────────────────────────────────────────┘
 ```
 
----
-
-## 💾 Database Architecture
-
-The application runs a local database `streaklab.db` with the following SQLite schema:
-
-```sql
--- Workspaces Table
-CREATE TABLE IF NOT EXISTS workspaces (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    description TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
--- Tasks (Habits) Table
-CREATE TABLE IF NOT EXISTS tasks (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    workspace_id INTEGER NOT NULL,
-    name TEXT NOT NULL,
-    frequency TEXT NOT NULL,
-    frequency_config TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE
-);
-
--- Completion Entries Table
-CREATE TABLE IF NOT EXISTS completion_entries (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    task_id INTEGER NOT NULL,
-    date TEXT NOT NULL,
-    completed INTEGER NOT NULL DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-    UNIQUE(task_id, date)
-);
-```
-
-*Note: Enforces `PRAGMA foreign_keys = ON;` on connection boot to cascade-delete tasks and completion entries when their parent workspaces or tasks are removed.*
+### Database Schema
+The local database `streaklab.db` is initialized on startup with the following schema:
+*   **Workspaces**: Contains notebook namespaces.
+*   **Tasks**: Habits tied to a workspace with configuration columns (`frequency`, `frequency_config`).
+*   **Completion Entries**: Specific dates checked off by the user. Configured with a `UNIQUE(task_id, date)` constraint and `FOREIGN KEY ... ON DELETE CASCADE` to ensure database cleanliness on deletions.
 
 ---
 
@@ -114,24 +84,31 @@ CREATE TABLE IF NOT EXISTS completion_entries (
     ```bash
     pnpm tauri dev
     ```
-    *Tauri will automatically compile the Rust backend, compile your React frontend, and launch the native desktop window.*
 
 ---
 
-## 📦 Compiling Production Installers
+## 📦 Download & Compilation Instructions
 
-To package the application as a standalone Windows executable (`.exe`) and installer (`.msi`):
+To compile the application as standalone Windows packages, run the following inside the `app/` folder:
 
-1.  Make sure you have [WiX Toolset v3](https://wixtoolset.org/) installed (Tauri will download this automatically in the background if needed).
-2.  Run the Tauri build command inside the `app/` directory:
-    ```bash
-    pnpm tauri build
-    ```
-3.  Locate the generated bundles inside:
-    `app/src-tauri/target/release/bundle/`
+```bash
+pnpm tauri build
+```
+
+This generates:
+*   **MSI Installer**: `app/src-tauri/target/release/bundle/msi/StreakLab_1.0.0_x64_en-US.msi`
+*   **EXE Setup Wizard**: `app/src-tauri/target/release/bundle/nsis/StreakLab_1.0.0_x64-setup.exe`
+
+---
+
+## 🗺️ Product Roadmap
+
+- [x] **v1.0.0 (Release)**: Bootstrap core layout, habit sheets, analytics engine, settings backups, and custom atomic-streak icons.
+- [ ] **v1.1.0 (Next)**: Implement interactive progress charts (monthly heatmaps, completion trends).
+- [ ] **v1.2.0 (Future)**: Add workspace grouping, habit categories, and archive states.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -19,18 +19,18 @@ const GALLERY: ScreenshotItem[] = [
     imagePath: "/assets/screenshots/dashboard.png",
   },
   {
-    id: "grid",
-    title: "Spreadsheet Grid",
-    description: "31-day checks grid sheet, specific weekday scheduling filters, and date locks.",
-    placeholderText: "Drop 'grid.png' inside public/assets/screenshots/ to replace this placeholder.",
-    imagePath: "/assets/screenshots/grid.png",
+    id: "workspaces",
+    title: "Workspaces list",
+    description: "Manage your streak notebooks and create new recurring habit collections.",
+    placeholderText: "Drop 'workspaces.png' inside public/assets/screenshots/ to replace this placeholder.",
+    imagePath: "/assets/screenshots/workspaces.png",
   },
   {
-    id: "analytics",
-    title: "Streaks Analytics",
-    description: "Chronological streak metrics calculation cards showing flame counts.",
-    placeholderText: "Drop 'analytics.png' inside public/assets/screenshots/ to replace this placeholder.",
-    imagePath: "/assets/screenshots/analytics.png",
+    id: "settings",
+    title: "Settings panel",
+    description: "Toggle between high-contrast light and dark themes and export JSON backups.",
+    placeholderText: "Drop 'settings.png' inside public/assets/screenshots/ to replace this placeholder.",
+    imagePath: "/assets/screenshots/settings.png",
   },
 ];
 
